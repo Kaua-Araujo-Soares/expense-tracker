@@ -1,0 +1,60 @@
+### Cadastrar usuário
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+  "name": "Kauaa",
+  "email": "kauaa@email.com",
+  "password": "123456"
+}
+
+### Login
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "kauaa@email.com",
+  "password": "123456"
+}
+
+### Criar categoria
+POST http://localhost:3000/categories
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJrYXVhYUBlbWFpbC5jb20iLCJpYXQiOjE3NzU5NDI5MzQsImV4cCI6MTc3NjU0NzczNH0.0TwcRAFzFJwSvbxxwODKOs364BfLvbvqfMIxTGLRss8
+
+{
+  "name": "Alimentação"
+}
+
+### Listar categorias
+GET http://localhost:3000/categories
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJrYXVhYUBlbWFpbC5jb20iLCJpYXQiOjE3NzU5NDI5MzQsImV4cCI6MTc3NjU0NzczNH0.0TwcRAFzFJwSvbxxwODKOs364BfLvbvqfMIxTGLRss8
+
+### Criar transação
+POST http://localhost:3000/transactions
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJrYXVhYUBlbWFpbC5jb20iLCJpYXQiOjE3NzU5NDI5MzQsImV4cCI6MTc3NjU0NzczNH0.0TwcRAFzFJwSvbxxwODKOs364BfLvbvqfMIxTGLRss8
+
+{
+  "description": "Mercado",
+  "amount": 150.00,
+  "type": "despesa",
+  "date": "2026-04-11",
+  "category_id": 1
+}
+
+### Listar transações
+GET http://localhost:3000/transactions
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJrYXVhYUBlbWFpbC5jb20iLCJpYXQiOjE3NzU5NDI5MzQsImV4cCI6MTc3NjU0NzczNH0.0TwcRAFzFJwSvbxxwODKOs364BfLvbvqfMIxTGLRss8
+
+### Resumo geral
+GET http://localhost:3000/reports/summary
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJrYXVhYUBlbWFpbC5jb20iLCJpYXQiOjE3NzU5NDI5MzQsImV4cCI6MTc3NjU0NzczNH0.0TwcRAFzFJwSvbxxwODKOs364BfLvbvqfMIxTGLRss8
+
+### Resumo por mês
+GET http://localhost:3000/reports/summary?mes=2026-04
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJrYXVhYUBlbWFpbC5jb20iLCJpYXQiOjE3NzU5NDI5MzQsImV4cCI6MTc3NjU0NzczNH0.0TwcRAFzFJwSvbxxwODKOs364BfLvbvqfMIxTGLRss8
+
+### Gastos por categoria
+GET http://localhost:3000/reports/by-category
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJrYXVhYUBlbWFpbC5jb20iLCJpYXQiOjE3NzU5NDI5MzQsImV4cCI6MTc3NjU0NzczNH0.0TwcRAFzFJwSvbxxwODKOs364BfLvbvqfMIxTGLRss8

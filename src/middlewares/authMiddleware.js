@@ -1,0 +1,23 @@
+const jwt = require('jsonwebtoken')
+
+// Middleware that protects authenticated routes
+// Checks if a valid JWT token was sent in the Authorization header
+const authMiddleware = (req, res, next) => {
+  const authHeader = req.headers['authorization']
+  const token = authHeader && authHeader.split(' ')[1] // expects format: "Bearer <token>"
+
+  if (!token) {
+    return res.status(401).json({ error: 'Token não fornecido' })
+  }
+
+  try {
+    const decoded = jwt.verify(token, 'minhasenhasecretajwt123')
+    req.user = decoded       // full decoded user data
+    req.userId = decoded.id  // handy shortcut for controllers
+    next()
+  } catch (err) {
+    return res.status(403).json({ error: 'Token inválido ou expirado' })
+  }
+}
+
+module.exports = authMiddleware
