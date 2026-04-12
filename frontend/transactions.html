@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Transações — gerencie receitas e despesas no Expense Tracker." />
+  <title>Transações — Expense Tracker</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+  <link rel="stylesheet" href="css/transactions.css" />
+  <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body class="app-page">
+
+  <!-- ─── Navbar ──────────────────────────────────────────── -->
+  <header class="navbar">
+    <div class="navbar-brand">
+      <div class="brand-icon-sm">💸</div>
+      <span class="brand-name">Expense Tracker</span>
+    </div>
+
+    <nav class="navbar-nav">
+      <a href="dashboard.html" class="nav-link" id="nav-dashboard">
+        <i data-feather="grid"></i> Dashboard
+      </a>
+      <a href="transactions.html" class="nav-link active" id="nav-transactions">
+        <i data-feather="list"></i> Transações
+      </a>
+    </nav>
+
+    <div class="navbar-user">
+      <div class="user-avatar" id="user-avatar">?</div>
+      <span class="user-name" id="user-name">Carregando...</span>
+      <button id="btn-logout" class="btn-icon btn-logout" title="Sair" onclick="logout()">
+        <i data-feather="log-out"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- ─── Main ────────────────────────────────────────────── -->
+  <main class="app-main">
+
+    <!-- Page header -->
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Transações</h1>
+        <p class="page-subtitle" id="tx-count">Carregando...</p>
+      </div>
+
+      <div class="header-actions">
+        <!-- Month filter -->
+        <div class="month-filter">
+          <i data-feather="calendar"></i>
+          <input id="month-picker" type="month" class="month-input" aria-label="Filtrar por mês" />
+        </div>
+
+        <!-- New transaction button -->
+        <button id="btn-new-tx" class="btn btn-primary btn-new" onclick="openModal()">
+          <i data-feather="plus"></i>
+          <span>Nova transação</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Alert -->
+    <div id="page-alert" class="alert alert-error" role="alert" style="margin-bottom:16px">
+      <i data-feather="alert-circle"></i>
+      <span id="page-alert-msg"></span>
+    </div>
+
+    <!-- ─── Table card ─────────────────────────────────────── -->
+    <div class="table-card">
+      <!-- Table header -->
+      <div class="table-toolbar">
+        <div class="table-search-wrap">
+          <i data-feather="search"></i>
+          <input
+            id="search-input"
+            type="text"
+            class="table-search"
+            placeholder="Buscar por descrição..."
+            oninput="filterTable()"
+          />
+        </div>
+        <div class="table-filters">
+          <button class="filter-chip active" data-type="all"   onclick="setTypeFilter('all',   this)">Todos</button>
+          <button class="filter-chip"        data-type="receita" onclick="setTypeFilter('receita', this)">Receitas</button>
+          <button class="filter-chip"        data-type="despesa" onclick="setTypeFilter('despesa', this)">Despesas</button>
+        </div>
+      </div>
+
+      <!-- Desktop table -->
+      <div class="table-wrap">
+        <table class="tx-table" id="tx-table">
+          <thead>
+            <tr>
+              <th>Descrição</th>
+              <th>Categoria</th>
+              <th>Data</th>
+              <th>Tipo</th>
+              <th class="col-right">Valor</th>
+              <th class="col-right">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tx-tbody">
+            <!-- skeleton rows -->
+            <tr class="skeleton-tr"><td colspan="6"><div class="skeleton-row"></div></td></tr>
+            <tr class="skeleton-tr"><td colspan="6"><div class="skeleton-row"></div></td></tr>
+            <tr class="skeleton-tr"><td colspan="6"><div class="skeleton-row"></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty state -->
+      <div id="empty-state" class="empty-state" style="display:none">
+        <i data-feather="inbox"></i>
+        <p>Nenhuma transação encontrada</p>
+        <button class="btn btn-primary btn-sm" onclick="openModal()">
+          <i data-feather="plus"></i> Adicionar transação
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ─── Modal ───────────────────────────────────────────── -->
+  <div id="modal-overlay" class="modal-overlay" onclick="handleOverlayClick(event)">
+    <div class="modal" id="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">Nova Transação</h2>
+        <button class="btn-icon modal-close" onclick="closeModal()" aria-label="Fechar">
+          <i data-feather="x"></i>
+        </button>
+      </div>
+
+      <!-- Modal alert -->
+      <div id="modal-alert" class="alert alert-error" role="alert">
+        <i data-feather="alert-circle"></i>
+        <span id="modal-alert-msg"></span>
+      </div>
+
+      <form id="modal-form" novalidate>
+        <input type="hidden" id="tx-id" />
+
+        <!-- Tipo receita/despesa -->
+        <div class="form-group">
+          <label class="form-label">Tipo</label>
+          <div class="type-toggle">
+            <button type="button" id="type-receita" class="type-btn receita"
+              onclick="setType('receita')">
+              <i data-feather="trending-up"></i> Receita
+            </button>
+            <button type="button" id="type-despesa" class="type-btn despesa"
+              onclick="setType('despesa')">
+              <i data-feather="trending-down"></i> Despesa
+            </button>
+          </div>
+        </div>
+
+        <!-- Descrição -->
+        <div class="form-group">
+          <label class="form-label" for="tx-description">Descrição</label>
+          <div class="input-wrapper">
+            <input id="tx-description" class="form-input" type="text"
+              placeholder="Ex: Aluguel, Salário..." required />
+            <i data-feather="file-text" class="input-icon"></i>
+          </div>
+          <span class="form-error" id="err-description">Informe uma descrição.</span>
+        </div>
+
+        <!-- Valor e Data (2 cols) -->
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="tx-amount">Valor (R$)</label>
+            <div class="input-wrapper">
+              <input id="tx-amount" class="form-input" type="number"
+                placeholder="0,00" min="0.01" step="0.01" required />
+              <i data-feather="dollar-sign" class="input-icon"></i>
+            </div>
+            <span class="form-error" id="err-amount">Informe um valor válido.</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="tx-date">Data</label>
+            <div class="input-wrapper">
+              <input id="tx-date" class="form-input" type="date" required />
+              <i data-feather="calendar" class="input-icon"></i>
+            </div>
+            <span class="form-error" id="err-date">Informe a data.</span>
+          </div>
+        </div>
+
+        <!-- Categoria -->
+        <div class="form-group">
+          <label class="form-label" for="tx-category">Categoria</label>
+          <div class="input-wrapper">
+            <select id="tx-category" class="form-input form-select">
+              <option value="">Sem categoria</option>
+            </select>
+            <i data-feather="tag" class="input-icon"></i>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+          <button type="submit" id="btn-submit" class="btn btn-primary">
+            <span class="spinner"></span>
+            <span class="btn-text" id="btn-submit-label">Salvar</span>
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ─── Confirm Delete Modal ─────────────────────────────── -->
+  <div id="confirm-overlay" class="modal-overlay" onclick="handleConfirmOverlay(event)">
+    <div class="modal modal-sm" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+      <div class="modal-header">
+        <h2 class="modal-title" id="confirm-title">Confirmar exclusão</h2>
+        <button class="btn-icon modal-close" onclick="closeConfirm()" aria-label="Fechar">
+          <i data-feather="x"></i>
+        </button>
+      </div>
+      <p class="confirm-msg">Tem certeza que deseja excluir a transação <strong id="confirm-tx-name"></strong>? Essa ação não pode ser desfeita.</p>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeConfirm()">Cancelar</button>
+        <button type="button" id="btn-confirm-delete" class="btn btn-danger">
+          <span class="spinner"></span>
+          <span class="btn-text">Excluir</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/transactions.js"></script>
+  <script>feather.replace()</script>
+</body>
+</html>
