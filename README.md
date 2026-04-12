@@ -1,6 +1,6 @@
-# Expense Tracker API
+# Expense Tracker
 
-A REST API for personal finance management. Allows users to register income, expenses, and categories, and generate spending reports by category and period.
+A full-stack personal finance management application with a REST API backend and a responsive web frontend. Allows users to register income, expenses, and categories, and visualize spending reports with charts.
 
 ## Technologies
 
@@ -9,6 +9,24 @@ A REST API for personal finance management. Allows users to register income, exp
 - PostgreSQL
 - JWT (authentication)
 - bcrypt (password encryption)
+- Chart.js (frontend charts)
+- Vanilla HTML/CSS/JavaScript (frontend)
+
+## Features
+
+- 🔐 **JWT Authentication** — Secure register and login with token-based auth
+- 💸 **Expense & Income Tracking** — Record and manage transactions with descriptions, amounts, dates and categories
+- 🗂️ **Category Management** — Create and organize custom spending categories per user
+- 📊 **Financial Reports with Charts** — Visual dashboard with income/expense summary cards and a doughnut chart showing spending by category
+- 🌙 **Responsive Frontend with Dark Mode** — Glassmorphism UI with full mobile support, accessible via browser at `http://localhost:3000`
+
+## Screenshots
+
+> Screenshots will be added here.
+
+| Login | Dashboard | Transactions |
+|-------|-----------|---------------|
+| *(coming soon)* | *(coming soon)* | *(coming soon)* |
 
 ## Getting Started
 
@@ -84,6 +102,14 @@ JWT_SECRET=your_secret_key
 ```bash
 node src/index.js
 ```
+
+Once the server is running, open your browser and navigate to:
+
+```
+http://localhost:3000
+```
+
+You will be greeted by the login page. Register an account to get started.
 
 ## API Routes
 
