@@ -28,6 +28,42 @@ function currentMonth() {
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
 }
 
+// ─── Month Selects (English, locale-independent) ──────────
+const MONTHS_EN = [
+  'January','February','March','April','May','June',
+  'July','August','September','October','November','December'
+]
+
+function buildMonthSelects() {
+  const mSel = document.getElementById('month-select')
+  const ySel = document.getElementById('year-select')
+  const now  = new Date()
+
+  MONTHS_EN.forEach((name, i) => {
+    const opt = document.createElement('option')
+    opt.value = String(i + 1).padStart(2, '0')
+    opt.textContent = name
+    mSel.appendChild(opt)
+  })
+
+  for (let y = now.getFullYear() + 1; y >= 2020; y--) {
+    const opt = document.createElement('option')
+    opt.value = y
+    opt.textContent = y
+    ySel.appendChild(opt)
+  }
+
+  // Default: current month / year
+  mSel.value = String(now.getMonth() + 1).padStart(2, '0')
+  ySel.value = now.getFullYear()
+}
+
+function getSelectedMonth() {
+  const m = document.getElementById('month-select').value
+  const y = document.getElementById('year-select').value
+  return `${y}-${m}`
+}
+
 function logout() {
   localStorage.removeItem('expense_token')
   window.location.replace('index.html')
@@ -172,15 +208,17 @@ function renderCategoryList(rows) {
   }
 
   container.innerHTML = rows.map((r, i) => {
-    const color   = COLORS[i % COLORS.length]
-    const tipo    = r.tipo   // 'receita' | 'despesa'
-    const cat     = r.categoria || 'No category'
+    const color      = COLORS[i % COLORS.length]
+    const isIncome   = r.tipo === 'receita'
+    const typeClass  = isIncome ? 'receita' : 'despesa'  // keep CSS class
+    const typeLabel  = isIncome ? 'Income' : 'Expense'
+    const cat        = r.categoria || 'No category'
     return `
       <div class="category-row">
         <span class="cat-dot" style="background:${color}"></span>
         <span class="cat-name">${cat}</span>
-        <span class="cat-type ${tipo}">${tipo}</span>
-        <span class="cat-total ${tipo}">${formatUSD(r.total)}</span>
+        <span class="cat-type ${typeClass}">${typeLabel}</span>
+        <span class="cat-total ${typeClass}">${formatUSD(r.total)}</span>
       </div>`
   }).join('')
 }
@@ -220,14 +258,16 @@ async function loadDashboard(mes) {
 }
 
 // ─── Month Picker ──────────────────────────────────────────
-const monthPicker = document.getElementById('month-picker')
-monthPicker.value = currentMonth()
+buildMonthSelects()
 
-monthPicker.addEventListener('change', () => {
-  loadDashboard(monthPicker.value)
+document.getElementById('month-select').addEventListener('change', () => {
+  loadDashboard(getSelectedMonth())
+})
+document.getElementById('year-select').addEventListener('change', () => {
+  loadDashboard(getSelectedMonth())
 })
 
 // ─── Init ──────────────────────────────────────────────────
 initUserInfo()
-loadDashboard(currentMonth())
+loadDashboard(getSelectedMonth())
 feather.replace()

@@ -242,7 +242,7 @@ a { text-decoration: none; color: inherit; }
 
 .form-input {
   width: 100%;
-  background: var(--glass-bg);
+  background: #1e2330;
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
   color: var(--text-primary);
@@ -251,6 +251,7 @@ a { text-decoration: none; color: inherit; }
   padding: 13px 16px 13px 44px;
   transition: var(--transition);
   outline: none;
+  color-scheme: dark;
 }
 
 .form-input::placeholder { color: var(--text-muted); }
@@ -259,6 +260,16 @@ a { text-decoration: none; color: inherit; }
   border-color: var(--accent);
   background: rgba(99, 102, 241, 0.06);
   box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+/* Force dark theme on native date/month inputs */
+input[type="date"],
+input[type="month"],
+input[type="time"],
+input[type="datetime-local"] {
+  color-scheme: dark;
+  background-color: #1e2330;
+  color: var(--text-primary);
 }
 
 .form-input:focus + .input-icon,

@@ -37,6 +37,41 @@ function currentMonth() {
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
 }
 
+// ─── Month Selects (English, locale-independent) ──────────
+const MONTHS_EN = [
+  'January','February','March','April','May','June',
+  'July','August','September','October','November','December'
+]
+
+function buildMonthSelects() {
+  const mSel = document.getElementById('month-select')
+  const ySel = document.getElementById('year-select')
+  const now  = new Date()
+
+  MONTHS_EN.forEach((name, i) => {
+    const opt = document.createElement('option')
+    opt.value = String(i + 1).padStart(2, '0')
+    opt.textContent = name
+    mSel.appendChild(opt)
+  })
+
+  for (let y = now.getFullYear() + 1; y >= 2020; y--) {
+    const opt = document.createElement('option')
+    opt.value = y
+    opt.textContent = y
+    ySel.appendChild(opt)
+  }
+
+  mSel.value = String(now.getMonth() + 1).padStart(2, '0')
+  ySel.value = now.getFullYear()
+}
+
+function getSelectedMonth() {
+  const m = document.getElementById('month-select').value
+  const y = document.getElementById('year-select').value
+  return `${y}-${m}`
+}
+
 function logout() {
   localStorage.removeItem('expense_token')
   window.location.replace('index.html')
@@ -134,24 +169,27 @@ function renderTable(rows) {
   countEl.textContent = `${rows.length} transaction${rows.length === 1 ? '' : 's'}`
 
   tbody.innerHTML = rows.map(tx => {
-    const catName  = categoryName(tx.category_id)
-    const typeIcon = tx.type === 'receita' ? 'trending-up' : 'trending-down'
-    const sign     = tx.type === 'receita' ? '+' : '-'
+    const catName   = categoryName(tx.category_id)
+    const isIncome  = tx.type === 'receita'
+    const typeIcon  = isIncome ? 'trending-up' : 'trending-down'
+    const sign      = isIncome ? '+' : '-'
+    const typeLabel = isIncome ? 'Income' : 'Expense'
+    const typeClass = isIncome ? 'receita' : 'despesa'  // keep CSS class as-is
     return `
       <tr data-id="${tx.id}" data-type="${tx.type}" data-desc="${tx.description.toLowerCase()}">
         <td class="td-description" title="${tx.description}">${tx.description}</td>
         <td class="td-category">${catName}</td>
         <td class="td-date">${formatDate(tx.date)}</td>
         <td>
-          <span class="type-badge ${tx.type}">
+          <span class="type-badge ${typeClass}">
             <i data-feather="${typeIcon}"></i>
-            ${tx.type}
+            ${typeLabel}
           </span>
         </td>
-        <td class="td-amount ${tx.type}">${sign} ${formatUSD(tx.amount)}</td>
+        <td class="td-amount ${typeClass}">${sign} ${formatUSD(tx.amount)}</td>
         <td class="td-actions">
           <button class="action-btn edit"   title="Edit"   onclick="openEditModal(${tx.id})"><i data-feather="edit-2"></i></button>
-          <button class="action-btn delete" title="Delete" onclick="openConfirm(${tx.id}, '${tx.description.replace(/'/g, "\\'")}')"><i data-feather="trash-2"></i></button>
+          <button class="action-btn delete" title="Delete" onclick="openConfirm(${tx.id}, '${tx.description.replace(/'/g, "\\'")}')" ><i data-feather="trash-2"></i></button>
         </td>
       </tr>`
   }).join('')
@@ -379,7 +417,7 @@ document.getElementById('modal-form').addEventListener('submit', async (e) => {
     }
 
     closeModal()
-    await load(document.getElementById('month-picker').value)
+    await load(getSelectedMonth())
 
   } catch (err) {
     console.error('[Submit Error]', err)
@@ -406,7 +444,7 @@ document.getElementById('btn-confirm-delete').addEventListener('click', async ()
     if (res.status === 401) { logout(); return }
 
     closeConfirm()
-    await load(document.getElementById('month-picker').value)
+    await load(getSelectedMonth())
 
   } catch (err) {
     console.error('[Delete Error]', err)
@@ -419,11 +457,12 @@ document.getElementById('btn-confirm-delete').addEventListener('click', async ()
 })
 
 // ─── Month Picker ──────────────────────────────────────────
-const monthPicker = document.getElementById('month-picker')
-monthPicker.value = currentMonth()
-monthPicker.addEventListener('change', () => load(monthPicker.value))
+buildMonthSelects()
+
+document.getElementById('month-select').addEventListener('change', () => load(getSelectedMonth()))
+document.getElementById('year-select').addEventListener('change',  () => load(getSelectedMonth()))
 
 // ─── Init ──────────────────────────────────────────────────
 initUserInfo()
-load(currentMonth())
+load(getSelectedMonth())
 feather.replace()

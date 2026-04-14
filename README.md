@@ -22,11 +22,13 @@ A full-stack personal finance management application with a REST API backend and
 
 ## Screenshots
 
-> Screenshots will be added here.
-
-| Login | Dashboard | Transactions |
-|-------|-----------|---------------|
-| *(coming soon)* | *(coming soon)* | *(coming soon)* |
+![Sign In](screenshots/Sign In - Expense Tracker.png)
+![Create Account](screenshots/Create account - Expense Tracker.png)
+![Overview](screenshots/Overview - Expense Tracker.png)
+![Transactions](screenshots/Transactions - Expense Tracker.png)
+![New Transaction](screenshots/New Transaction - Expense Tracker.png)
+![Categories](screenshots/Categories - Expense Tracker.png)
+![New Category](screenshots/New Category - Expense Tracker.png)
 
 ## Getting Started
 
