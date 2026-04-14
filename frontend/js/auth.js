@@ -21,7 +21,7 @@ function togglePassword(inputId, btn) {
   const input = document.getElementById(inputId)
   const isHidden = input.type === 'password'
   input.type = isHidden ? 'text' : 'password'
-  btn.setAttribute('aria-label', isHidden ? 'Ocultar senha' : 'Mostrar senha')
+  btn.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password')
   // Swap icon
   btn.innerHTML = isHidden
     ? '<i data-feather="eye-off"></i>'
@@ -80,11 +80,11 @@ document.getElementById('form-login').addEventListener('submit', async (e) => {
   // Client-side validation
   let valid = true
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    showFieldError('login-email-error', 'Informe um e-mail válido.')
+    showFieldError('login-email-error', 'Please enter a valid email.')
     valid = false
   }
   if (!password) {
-    showFieldError('login-password-error', 'Informe sua senha.')
+    showFieldError('login-password-error', 'Please enter your password.')
     valid = false
   }
   if (!valid) return
@@ -101,7 +101,7 @@ document.getElementById('form-login').addEventListener('submit', async (e) => {
     const data = await res.json()
 
     if (!res.ok) {
-      showAlert('login', data.message || 'E-mail ou senha inválidos.')
+      showAlert('login', data.message || 'Invalid email or password.')
       return
     }
 
@@ -111,7 +111,7 @@ document.getElementById('form-login').addEventListener('submit', async (e) => {
 
   } catch (err) {
     console.error('[Login Error]', err)
-    showAlert('login', 'Erro de conexão. Tente novamente.')
+    showAlert('login', 'Connection error. Please try again.')
   } finally {
     setLoading('btn-login', false)
   }
@@ -130,15 +130,15 @@ document.getElementById('form-register').addEventListener('submit', async (e) =>
   // Client-side validation
   let valid = true
   if (!name) {
-    showFieldError('register-name-error', 'Informe seu nome.')
+    showFieldError('register-name-error', 'Please enter your name.')
     valid = false
   }
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    showFieldError('register-email-error', 'Informe um e-mail válido.')
+    showFieldError('register-email-error', 'Please enter a valid email.')
     valid = false
   }
   if (!password || password.length < 6) {
-    showFieldError('register-password-error', 'A senha deve ter no mínimo 6 caracteres.')
+    showFieldError('register-password-error', 'Password must be at least 6 characters.')
     valid = false
   }
   if (!valid) return
@@ -155,7 +155,7 @@ document.getElementById('form-register').addEventListener('submit', async (e) =>
     const data = await res.json()
 
     if (!res.ok) {
-      showAlert('register', data.message || 'Erro ao criar conta.')
+      showAlert('register', data.message || 'Error creating account.')
       return
     }
 
@@ -165,7 +165,7 @@ document.getElementById('form-register').addEventListener('submit', async (e) =>
 
   } catch (err) {
     console.error('[Register Error]', err)
-    showAlert('register', 'Erro de conexão. Tente novamente.')
+    showAlert('register', 'Connection error. Please try again.')
   } finally {
     setLoading('btn-register', false)
   }

@@ -19,8 +19,8 @@ const COLORS = [
 let pieChart = null  // Chart.js instance
 
 // ─── Helpers ──────────────────────────────────────────────
-function formatBRL(value) {
-  return Number(value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+function formatUSD(value) {
+  return Number(value).toLocaleString('en-US', { style: 'currency', currency: 'USD' })
 }
 
 function currentMonth() {
@@ -48,7 +48,7 @@ function initUserInfo() {
   const data = decodeToken(token)
   if (!data) return
 
-  const name = data.name || data.email || 'Usuário'
+  const name = data.name || data.email || 'User'
   document.getElementById('user-name').textContent = name
   document.getElementById('user-avatar').textContent = name.charAt(0).toUpperCase()
 }
@@ -59,15 +59,15 @@ async function fetchSummary(mes) {
   const res = await fetch(`/reports/summary${qs}`, { headers: HEADERS() })
 
   if (res.status === 401) { logout(); return }
-  if (!res.ok) throw new Error('Erro ao buscar resumo')
+  if (!res.ok) throw new Error('Failed to fetch summary')
 
   return res.json()
 }
 
 function renderSummary({ total_receitas, total_despesas, saldo }) {
-  document.getElementById('val-income').textContent  = formatBRL(total_receitas)
-  document.getElementById('val-expense').textContent = formatBRL(total_despesas)
-  document.getElementById('val-balance').textContent = formatBRL(saldo)
+  document.getElementById('val-income').textContent  = formatUSD(total_receitas)
+  document.getElementById('val-expense').textContent = formatUSD(total_despesas)
+  document.getElementById('val-balance').textContent = formatUSD(saldo)
 
   const balanceCard = document.getElementById('card-balance')
   balanceCard.classList.toggle('negative', Number(saldo) < 0)
@@ -79,7 +79,7 @@ async function fetchByCategory(mes) {
   const res = await fetch(`/reports/by-category${qs}`, { headers: HEADERS() })
 
   if (res.status === 401) { logout(); return }
-  if (!res.ok) throw new Error('Erro ao buscar categorias')
+  if (!res.ok) throw new Error('Failed to fetch categories')
 
   return res.json()
 }
@@ -102,7 +102,7 @@ function renderPie(rows) {
   canvas.style.display = 'block'
   empty.style.display  = 'none'
 
-  const labels = expenses.map(r => r.categoria || 'Sem categoria')
+  const labels = expenses.map(r => r.categoria || 'No category')
   const values = expenses.map(r => Number(r.total))
   const total  = values.reduce((a, b) => a + b, 0)
   const colors = expenses.map((_, i) => COLORS[i % COLORS.length])
@@ -132,7 +132,7 @@ function renderPie(rows) {
           callbacks: {
             label: ctx => {
               const pct = ((ctx.parsed / total) * 100).toFixed(1)
-              return ` ${formatBRL(ctx.parsed)} (${pct}%)`
+              return ` ${formatUSD(ctx.parsed)} (${pct}%)`
             }
           },
           backgroundColor: 'rgba(22,27,34,0.95)',
@@ -153,7 +153,7 @@ function renderPie(rows) {
     return `
       <div class="legend-item">
         <span class="legend-dot" style="background:${colors[i]}"></span>
-        <span class="legend-name">${r.categoria || 'Sem categoria'}</span>
+        <span class="legend-name">${r.categoria || 'No category'}</span>
         <span class="legend-pct">${pct}%</span>
       </div>`
   }).join('')
@@ -166,7 +166,7 @@ function renderCategoryList(rows) {
   if (!rows.length) {
     container.innerHTML = `
       <div style="text-align:center;padding:32px 0;color:var(--text-muted);font-size:.85rem">
-        Nenhuma transação no período.
+        No transactions in this period.
       </div>`
     return
   }
@@ -174,13 +174,13 @@ function renderCategoryList(rows) {
   container.innerHTML = rows.map((r, i) => {
     const color   = COLORS[i % COLORS.length]
     const tipo    = r.tipo   // 'receita' | 'despesa'
-    const cat     = r.categoria || 'Sem categoria'
+    const cat     = r.categoria || 'No category'
     return `
       <div class="category-row">
         <span class="cat-dot" style="background:${color}"></span>
         <span class="cat-name">${cat}</span>
         <span class="cat-type ${tipo}">${tipo}</span>
-        <span class="cat-total ${tipo}">${formatBRL(r.total)}</span>
+        <span class="cat-total ${tipo}">${formatUSD(r.total)}</span>
       </div>`
   }).join('')
 }
@@ -190,8 +190,8 @@ async function loadDashboard(mes) {
   // Update badge
   const badge = document.getElementById('pie-badge')
   badge.textContent = mes
-    ? new Date(`${mes}-01`).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
-    : 'Todos os meses'
+    ? new Date(`${mes}-01`).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+    : 'All months'
 
   // Skeleton on cards
   ;['val-income', 'val-expense', 'val-balance'].forEach(id => {

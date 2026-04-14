@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Expense Tracker — gerencie suas finanças pessoais com simplicidade e inteligência." />
-  <title>Entrar — Expense Tracker</title>
+  <meta name="description" content="Expense Tracker — manage your personal finances with simplicity and intelligence." />
+  <title>Sign In — Expense Tracker</title>
   <link rel="stylesheet" href="css/style.css" />
   <!-- Feather Icons (CDN) -->
   <script src="https://unpkg.com/feather-icons"></script>
@@ -21,21 +21,21 @@
       </div>
 
       <div class="hero-text">
-        <h1>Controle suas finanças com inteligência</h1>
-        <p>Acompanhe receitas, despesas e relatórios em tempo real — tudo num só lugar.</p>
+        <h1>Take control of your finances</h1>
+        <p>Track income, expenses and reports in real time — all in one place.</p>
 
         <div class="stats-row">
           <div class="stat-chip">
             <div class="value">360°</div>
-            <div class="label">Visão financeira</div>
+            <div class="label">Financial overview</div>
           </div>
           <div class="stat-chip">
             <div class="value">100%</div>
-            <div class="label">Seguro</div>
+            <div class="label">Secure</div>
           </div>
           <div class="stat-chip">
             <div class="value">∞</div>
-            <div class="label">Transações</div>
+            <div class="label">Transactions</div>
           </div>
         </div>
       </div>
@@ -54,7 +54,7 @@
             aria-selected="true"
             aria-controls="panel-login"
             onclick="switchTab('login')"
-          >Entrar</button>
+          >Sign In</button>
           <button
             id="tab-register"
             class="auth-tab"
@@ -62,19 +62,19 @@
             aria-selected="false"
             aria-controls="panel-register"
             onclick="switchTab('register')"
-          >Criar conta</button>
+          >Create account</button>
         </div>
 
         <!-- ── Login Form ─────────────────────── -->
         <div id="panel-login" role="tabpanel" aria-labelledby="tab-login">
           <div class="auth-card-header">
-            <h2>Bem-vindo de volta 👋</h2>
-            <p>Entre na sua conta para continuar</p>
+            <h2>Welcome back 👋</h2>
+            <p>Sign in to your account to continue</p>
           </div>
 
           <div id="alert-login" class="alert alert-error" role="alert">
             <i data-feather="alert-circle"></i>
-            <span id="alert-login-msg">Usuário ou senha inválidos.</span>
+            <span id="alert-login-msg">Invalid email or password.</span>
           </div>
 
           <form id="form-login" novalidate>
@@ -85,17 +85,17 @@
                   id="login-email"
                   class="form-input"
                   type="email"
-                  placeholder="seu@email.com"
+                  placeholder="your@email.com"
                   autocomplete="email"
                   required
                 />
                 <i data-feather="mail" class="input-icon"></i>
               </div>
-              <span class="form-error" id="login-email-error">Informe um e-mail válido.</span>
+              <span class="form-error" id="login-email-error">Please enter a valid email.</span>
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="login-password">Senha</label>
+              <label class="form-label" for="login-password">Password</label>
               <div class="input-wrapper">
                 <input
                   id="login-password"
@@ -109,18 +109,18 @@
                 <button
                   type="button"
                   class="toggle-password"
-                  aria-label="Mostrar senha"
+                  aria-label="Show password"
                   onclick="togglePassword('login-password', this)"
                 >
                   <i data-feather="eye"></i>
                 </button>
               </div>
-              <span class="form-error" id="login-password-error">Informe sua senha.</span>
+              <span class="form-error" id="login-password-error">Please enter your password.</span>
             </div>
 
             <button id="btn-login" class="btn btn-primary" type="submit">
               <span class="spinner"></span>
-              <span class="btn-text">Entrar na conta</span>
+              <span class="btn-text">Sign in</span>
             </button>
           </form>
         </div>
@@ -128,30 +128,30 @@
         <!-- ── Register Form ──────────────────── -->
         <div id="panel-register" role="tabpanel" aria-labelledby="tab-register" style="display:none">
           <div class="auth-card-header">
-            <h2>Criar conta 🚀</h2>
-            <p>Preencha os dados para começar gratuitamente</p>
+            <h2>Create account 🚀</h2>
+            <p>Fill in your details to get started for free</p>
           </div>
 
           <div id="alert-register" class="alert alert-error" role="alert">
             <i data-feather="alert-circle"></i>
-            <span id="alert-register-msg">Erro ao criar conta.</span>
+            <span id="alert-register-msg">Error creating account.</span>
           </div>
 
           <form id="form-register" novalidate>
             <div class="form-group">
-              <label class="form-label" for="register-name">Nome</label>
+              <label class="form-label" for="register-name">Name</label>
               <div class="input-wrapper">
                 <input
                   id="register-name"
                   class="form-input"
                   type="text"
-                  placeholder="Seu nome completo"
+                  placeholder="Your full name"
                   autocomplete="name"
                   required
                 />
                 <i data-feather="user" class="input-icon"></i>
               </div>
-              <span class="form-error" id="register-name-error">Informe seu nome.</span>
+              <span class="form-error" id="register-name-error">Please enter your name.</span>
             </div>
 
             <div class="form-group">
@@ -161,23 +161,23 @@
                   id="register-email"
                   class="form-input"
                   type="email"
-                  placeholder="seu@email.com"
+                  placeholder="your@email.com"
                   autocomplete="email"
                   required
                 />
                 <i data-feather="mail" class="input-icon"></i>
               </div>
-              <span class="form-error" id="register-email-error">Informe um e-mail válido.</span>
+              <span class="form-error" id="register-email-error">Please enter a valid email.</span>
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="register-password">Senha</label>
+              <label class="form-label" for="register-password">Password</label>
               <div class="input-wrapper">
                 <input
                   id="register-password"
                   class="form-input"
                   type="password"
-                  placeholder="Mínimo 6 caracteres"
+                  placeholder="Minimum 6 characters"
                   autocomplete="new-password"
                   required
                   minlength="6"
@@ -186,18 +186,18 @@
                 <button
                   type="button"
                   class="toggle-password"
-                  aria-label="Mostrar senha"
+                  aria-label="Show password"
                   onclick="togglePassword('register-password', this)"
                 >
                   <i data-feather="eye"></i>
                 </button>
               </div>
-              <span class="form-error" id="register-password-error">A senha deve ter no mínimo 6 caracteres.</span>
+              <span class="form-error" id="register-password-error">Password must be at least 6 characters.</span>
             </div>
 
             <button id="btn-register" class="btn btn-primary" type="submit">
               <span class="spinner"></span>
-              <span class="btn-text">Criar conta gratuita</span>
+              <span class="btn-text">Create free account</span>
             </button>
           </form>
         </div>

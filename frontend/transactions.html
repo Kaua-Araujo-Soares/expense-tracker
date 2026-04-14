@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Transações — gerencie receitas e despesas no Expense Tracker." />
-  <title>Transações — Expense Tracker</title>
+  <meta name="description" content="Transactions — manage your income and expenses in Expense Tracker." />
+  <title>Transactions — Expense Tracker</title>
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/dashboard.css" />
   <link rel="stylesheet" href="css/transactions.css" />
+  <link rel="stylesheet" href="css/categories.css" />
   <script src="https://unpkg.com/feather-icons"></script>
 </head>
 <body class="app-page">
@@ -24,14 +25,17 @@
         <i data-feather="grid"></i> Dashboard
       </a>
       <a href="transactions.html" class="nav-link active" id="nav-transactions">
-        <i data-feather="list"></i> Transações
+        <i data-feather="list"></i> Transactions
+      </a>
+      <a href="categories.html" class="nav-link" id="nav-categories">
+        <i data-feather="tag"></i> Categories
       </a>
     </nav>
 
     <div class="navbar-user">
       <div class="user-avatar" id="user-avatar">?</div>
-      <span class="user-name" id="user-name">Carregando...</span>
-      <button id="btn-logout" class="btn-icon btn-logout" title="Sair" onclick="logout()">
+      <span class="user-name" id="user-name">Loading...</span>
+      <button id="btn-logout" class="btn-icon btn-logout" title="Logout" onclick="logout()">
         <i data-feather="log-out"></i>
       </button>
     </div>
@@ -43,21 +47,21 @@
     <!-- Page header -->
     <div class="page-header">
       <div>
-        <h1 class="page-title">Transações</h1>
-        <p class="page-subtitle" id="tx-count">Carregando...</p>
+        <h1 class="page-title">Transactions</h1>
+        <p class="page-subtitle" id="tx-count">Loading...</p>
       </div>
 
       <div class="header-actions">
         <!-- Month filter -->
         <div class="month-filter">
           <i data-feather="calendar"></i>
-          <input id="month-picker" type="month" class="month-input" aria-label="Filtrar por mês" />
+          <input id="month-picker" type="month" class="month-input" aria-label="Filter by month" />
         </div>
 
         <!-- New transaction button -->
         <button id="btn-new-tx" class="btn btn-primary btn-new" onclick="openModal()">
           <i data-feather="plus"></i>
-          <span>Nova transação</span>
+          <span>New transaction</span>
         </button>
       </div>
     </div>
@@ -78,14 +82,14 @@
             id="search-input"
             type="text"
             class="table-search"
-            placeholder="Buscar por descrição..."
+            placeholder="Search by description..."
             oninput="filterTable()"
           />
         </div>
         <div class="table-filters">
-          <button class="filter-chip active" data-type="all"   onclick="setTypeFilter('all',   this)">Todos</button>
-          <button class="filter-chip"        data-type="receita" onclick="setTypeFilter('receita', this)">Receitas</button>
-          <button class="filter-chip"        data-type="despesa" onclick="setTypeFilter('despesa', this)">Despesas</button>
+          <button class="filter-chip active" data-type="all"    onclick="setTypeFilter('all',    this)">All</button>
+          <button class="filter-chip"        data-type="income" onclick="setTypeFilter('income', this)">Income</button>
+          <button class="filter-chip"        data-type="expense" onclick="setTypeFilter('expense', this)">Expenses</button>
         </div>
       </div>
 
@@ -94,12 +98,12 @@
         <table class="tx-table" id="tx-table">
           <thead>
             <tr>
-              <th>Descrição</th>
-              <th>Categoria</th>
-              <th>Data</th>
-              <th>Tipo</th>
-              <th class="col-right">Valor</th>
-              <th class="col-right">Ações</th>
+              <th>Description</th>
+              <th>Category</th>
+              <th>Date</th>
+              <th>Type</th>
+              <th class="col-right">Amount</th>
+              <th class="col-right">Actions</th>
             </tr>
           </thead>
           <tbody id="tx-tbody">
@@ -114,9 +118,9 @@
       <!-- Empty state -->
       <div id="empty-state" class="empty-state" style="display:none">
         <i data-feather="inbox"></i>
-        <p>Nenhuma transação encontrada</p>
+        <p>No transactions found</p>
         <button class="btn btn-primary btn-sm" onclick="openModal()">
-          <i data-feather="plus"></i> Adicionar transação
+          <i data-feather="plus"></i> Add transaction
         </button>
       </div>
     </div>
@@ -128,8 +132,8 @@
     <div class="modal" id="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-title">
 
       <div class="modal-header">
-        <h2 class="modal-title" id="modal-title">Nova Transação</h2>
-        <button class="btn-icon modal-close" onclick="closeModal()" aria-label="Fechar">
+        <h2 class="modal-title" id="modal-title">New Transaction</h2>
+        <button class="btn-icon modal-close" onclick="closeModal()" aria-label="Close">
           <i data-feather="x"></i>
         </button>
       </div>
@@ -143,70 +147,90 @@
       <form id="modal-form" novalidate>
         <input type="hidden" id="tx-id" />
 
-        <!-- Tipo receita/despesa -->
+        <!-- Type: income/expense -->
         <div class="form-group">
-          <label class="form-label">Tipo</label>
+          <label class="form-label">Type</label>
           <div class="type-toggle">
-            <button type="button" id="type-receita" class="type-btn receita"
-              onclick="setType('receita')">
-              <i data-feather="trending-up"></i> Receita
+            <button type="button" id="type-income" class="type-btn income"
+              onclick="setType('income')">
+              <i data-feather="trending-up"></i> Income
             </button>
-            <button type="button" id="type-despesa" class="type-btn despesa"
-              onclick="setType('despesa')">
-              <i data-feather="trending-down"></i> Despesa
+            <button type="button" id="type-expense" class="type-btn expense"
+              onclick="setType('expense')">
+              <i data-feather="trending-down"></i> Expense
             </button>
           </div>
         </div>
 
-        <!-- Descrição -->
+        <!-- Description -->
         <div class="form-group">
-          <label class="form-label" for="tx-description">Descrição</label>
+          <label class="form-label" for="tx-description">Description</label>
           <div class="input-wrapper">
             <input id="tx-description" class="form-input" type="text"
-              placeholder="Ex: Aluguel, Salário..." required />
+              placeholder="e.g. Rent, Salary..." required />
             <i data-feather="file-text" class="input-icon"></i>
           </div>
-          <span class="form-error" id="err-description">Informe uma descrição.</span>
+          <span class="form-error" id="err-description">Please enter a description.</span>
         </div>
 
-        <!-- Valor e Data (2 cols) -->
+        <!-- Amount and Date (2 cols) -->
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label" for="tx-amount">Valor (R$)</label>
+            <label class="form-label" for="tx-amount">Amount ($)</label>
             <div class="input-wrapper">
               <input id="tx-amount" class="form-input" type="number"
-                placeholder="0,00" min="0.01" step="0.01" required />
+                placeholder="0.00" min="0.01" step="0.01" required />
               <i data-feather="dollar-sign" class="input-icon"></i>
             </div>
-            <span class="form-error" id="err-amount">Informe um valor válido.</span>
+            <span class="form-error" id="err-amount">Please enter a valid amount.</span>
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="tx-date">Data</label>
+            <label class="form-label" for="tx-date">Date</label>
             <div class="input-wrapper">
               <input id="tx-date" class="form-input" type="date" required />
               <i data-feather="calendar" class="input-icon"></i>
             </div>
-            <span class="form-error" id="err-date">Informe a data.</span>
+            <span class="form-error" id="err-date">Please enter the date.</span>
           </div>
         </div>
 
-        <!-- Categoria -->
+        <!-- Category -->
         <div class="form-group">
-          <label class="form-label" for="tx-category">Categoria</label>
+          <label class="form-label" for="tx-category">Category</label>
           <div class="input-wrapper">
             <select id="tx-category" class="form-input form-select">
-              <option value="">Sem categoria</option>
+              <option value="">No category</option>
             </select>
             <i data-feather="tag" class="input-icon"></i>
+          </div>
+          <!-- Inline quick-create -->
+          <div class="cat-inline-wrap">
+            <button type="button" class="btn-add-cat" id="btn-add-cat" onclick="toggleInlineCat()">
+              <i data-feather="plus-circle"></i> New category
+            </button>
+            <div class="cat-inline-input-wrap" id="inline-cat-wrap">
+              <input
+                id="inline-cat-input"
+                class="cat-inline-input"
+                type="text"
+                placeholder="Category name..."
+              />
+              <button type="button" class="btn-cat-save" title="Save" onclick="saveInlineCat()">
+                <i data-feather="check"></i>
+              </button>
+              <button type="button" class="btn-cat-cancel" title="Cancel" onclick="toggleInlineCat(false)">
+                <i data-feather="x"></i>
+              </button>
+            </div>
           </div>
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+          <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button>
           <button type="submit" id="btn-submit" class="btn btn-primary">
             <span class="spinner"></span>
-            <span class="btn-text" id="btn-submit-label">Salvar</span>
+            <span class="btn-text" id="btn-submit-label">Save</span>
           </button>
         </div>
       </form>
@@ -218,17 +242,17 @@
   <div id="confirm-overlay" class="modal-overlay" onclick="handleConfirmOverlay(event)">
     <div class="modal modal-sm" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
       <div class="modal-header">
-        <h2 class="modal-title" id="confirm-title">Confirmar exclusão</h2>
-        <button class="btn-icon modal-close" onclick="closeConfirm()" aria-label="Fechar">
+        <h2 class="modal-title" id="confirm-title">Confirm deletion</h2>
+        <button class="btn-icon modal-close" onclick="closeConfirm()" aria-label="Close">
           <i data-feather="x"></i>
         </button>
       </div>
-      <p class="confirm-msg">Tem certeza que deseja excluir a transação <strong id="confirm-tx-name"></strong>? Essa ação não pode ser desfeita.</p>
+      <p class="confirm-msg">Are you sure you want to delete the transaction <strong id="confirm-tx-name"></strong>? This action cannot be undone.</p>
       <div class="modal-footer">
-        <button type="button" class="btn btn-ghost" onclick="closeConfirm()">Cancelar</button>
+        <button type="button" class="btn btn-ghost" onclick="closeConfirm()">Cancel</button>
         <button type="button" id="btn-confirm-delete" class="btn btn-danger">
           <span class="spinner"></span>
-          <span class="btn-text">Excluir</span>
+          <span class="btn-text">Delete</span>
         </button>
       </div>
     </div>

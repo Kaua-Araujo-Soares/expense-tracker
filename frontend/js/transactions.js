@@ -14,17 +14,17 @@ let categories      = []   // [{id, name}]
 let editingId       = null // null = create mode
 let deleteTargetId  = null
 let typeFilter      = 'all'
-let selectedType    = 'despesa'
+let selectedType    = 'expense'
 
 // ─── Helpers ──────────────────────────────────────────────
-function formatBRL(value) {
-  return Number(value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+function formatUSD(value) {
+  return Number(value).toLocaleString('en-US', { style: 'currency', currency: 'USD' })
 }
 
 function formatDate(dateStr) {
   // dateStr comes as ISO "2026-04-12T00:00:00.000Z" or "2026-04-12"
   const d = new Date(dateStr)
-  return d.toLocaleDateString('pt-BR', { timeZone: 'UTC' })
+  return d.toLocaleDateString('en-US', { timeZone: 'UTC' })
 }
 
 function toInputDate(dateStr) {
@@ -50,7 +50,7 @@ function decodeToken(jwt) {
 function initUserInfo() {
   const data = decodeToken(token)
   if (!data) return
-  const name = data.name || data.email || 'Usuário'
+  const name = data.name || data.email || 'User'
   document.getElementById('user-name').textContent  = name
   document.getElementById('user-avatar').textContent = name.charAt(0).toUpperCase()
 }
@@ -90,7 +90,7 @@ async function fetchCategories() {
 
     const select = document.getElementById('tx-category')
     const currentVal = select.value
-    select.innerHTML = '<option value="">Sem categoria</option>'
+    select.innerHTML = '<option value="">No category</option>'
     categories.forEach(c => {
       const opt = document.createElement('option')
       opt.value = c.id
@@ -113,7 +113,7 @@ async function fetchTransactions(mes) {
   const qs  = mes ? `?mes=${mes}` : ''
   const res = await fetch(`/transactions${qs}`, { headers: HEADERS() })
   if (res.status === 401) { logout(); return [] }
-  if (!res.ok) throw new Error('Erro ao buscar transações')
+  if (!res.ok) throw new Error('Failed to fetch transactions')
   return res.json()
 }
 
@@ -126,12 +126,12 @@ function renderTable(rows) {
   if (!rows.length) {
     tbody.innerHTML  = ''
     emptyState.style.display = 'flex'
-    countEl.textContent      = 'Nenhuma transação encontrada'
+    countEl.textContent      = 'No transactions found'
     return
   }
 
   emptyState.style.display = 'none'
-  countEl.textContent = `${rows.length} transaç${rows.length === 1 ? 'ão' : 'ões'}`
+  countEl.textContent = `${rows.length} transaction${rows.length === 1 ? '' : 's'}`
 
   tbody.innerHTML = rows.map(tx => {
     const catName  = categoryName(tx.category_id)
@@ -148,10 +148,10 @@ function renderTable(rows) {
             ${tx.type}
           </span>
         </td>
-        <td class="td-amount ${tx.type}">${sign} ${formatBRL(tx.amount)}</td>
+        <td class="td-amount ${tx.type}">${sign} ${formatUSD(tx.amount)}</td>
         <td class="td-actions">
-          <button class="action-btn edit"   title="Editar"  onclick="openEditModal(${tx.id})"><i data-feather="edit-2"></i></button>
-          <button class="action-btn delete" title="Excluir" onclick="openConfirm(${tx.id}, '${tx.description.replace(/'/g, "\\'")}')"><i data-feather="trash-2"></i></button>
+          <button class="action-btn edit"   title="Edit"   onclick="openEditModal(${tx.id})"><i data-feather="edit-2"></i></button>
+          <button class="action-btn delete" title="Delete" onclick="openConfirm(${tx.id}, '${tx.description.replace(/'/g, "\\'")}')"><i data-feather="trash-2"></i></button>
         </td>
       </tr>`
   }).join('')
@@ -195,31 +195,32 @@ async function load(mes) {
     renderTable(txs)
   } catch (err) {
     console.error('[Load Error]', err)
-    showPageAlert('Erro ao carregar transações.')
+    showPageAlert('Failed to load transactions.')
   }
 }
 
 // ─── Type toggle ───────────────────────────────────────────
 function setType(type) {
   selectedType = type
-  document.getElementById('type-receita').classList.toggle('active', type === 'receita')
-  document.getElementById('type-despesa').classList.toggle('active', type === 'despesa')
+  document.getElementById('type-income').classList.toggle('active',  type === 'income')
+  document.getElementById('type-expense').classList.toggle('active', type === 'expense')
 }
 
 // ─── Modal open/close ──────────────────────────────────────
 function openModal() {
   editingId = null
-  selectedType = 'despesa'
-  document.getElementById('modal-title').textContent = 'Nova Transação'
-  document.getElementById('btn-submit-label').textContent = 'Salvar'
+  selectedType = 'expense'
+  document.getElementById('modal-title').textContent = 'New Transaction'
+  document.getElementById('btn-submit-label').textContent = 'Save'
   document.getElementById('modal-form').reset()
   document.getElementById('tx-id').value = ''
   clearFormErrors()
   hideModalAlert()
-  setType('despesa')
+  setType('expense')
   // Default date = today
   document.getElementById('tx-date').value = new Date().toISOString().slice(0, 10)
   fetchCategories()
+  toggleInlineCat(false)
   document.getElementById('modal-overlay').classList.add('open')
 }
 
@@ -228,23 +229,27 @@ function openEditModal(id) {
   if (!tx) return
 
   editingId = id
-  document.getElementById('modal-title').textContent      = 'Editar Transação'
-  document.getElementById('btn-submit-label').textContent = 'Atualizar'
+  document.getElementById('modal-title').textContent      = 'Edit Transaction'
+  document.getElementById('btn-submit-label').textContent = 'Update'
   document.getElementById('tx-id').value                  = tx.id
   document.getElementById('tx-description').value         = tx.description
   document.getElementById('tx-amount').value              = tx.amount
   document.getElementById('tx-date').value                = toInputDate(tx.date)
   clearFormErrors()
   hideModalAlert()
-  setType(tx.type)
+  // Map stored DB value (receita/despesa) back to UI type (income/expense)
+  const uiType = tx.type === 'receita' ? 'income' : 'expense'
+  setType(uiType)
   fetchCategories().then(() => {
     document.getElementById('tx-category').value = tx.category_id || ''
   })
+  toggleInlineCat(false)
   document.getElementById('modal-overlay').classList.add('open')
 }
 
 function closeModal() {
   document.getElementById('modal-overlay').classList.remove('open')
+  toggleInlineCat(false)
 }
 
 function handleOverlayClick(e) {
@@ -281,6 +286,52 @@ function validateForm() {
   return ok
 }
 
+// ─── Inline Category Creator ───────────────────────────────
+function toggleInlineCat(show) {
+  const wrap  = document.getElementById('inline-cat-wrap')
+  const input = document.getElementById('inline-cat-input')
+  const isVisible = wrap.classList.contains('visible')
+  const shouldShow = (show === undefined) ? !isVisible : show
+
+  wrap.classList.toggle('visible', shouldShow)
+  feather.replace()
+
+  if (shouldShow) {
+    input.value = ''
+    setTimeout(() => input.focus(), 80)
+  }
+}
+
+async function saveInlineCat() {
+  const input = document.getElementById('inline-cat-input')
+  const name  = input.value.trim()
+  if (!name) { input.focus(); return }
+
+  try {
+    const res = await fetch('/categories', {
+      method:  'POST',
+      headers: HEADERS(),
+      body:    JSON.stringify({ name }),
+    })
+    if (res.status === 401) { logout(); return }
+    if (!res.ok) { showModalAlert('Failed to create category.'); return }
+
+    const cat = await res.json()
+    // Reload dropdown and select new category
+    await fetchCategories()
+    document.getElementById('tx-category').value = cat.id
+    toggleInlineCat(false)
+  } catch {
+    showModalAlert('Connection error. Please try again.')
+  }
+}
+
+// Allow Enter to save inline cat
+document.getElementById('inline-cat-input')?.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') { e.preventDefault(); saveInlineCat() }
+  if (e.key === 'Escape') toggleInlineCat(false)
+})
+
 // ─── Submit form ───────────────────────────────────────────
 function setSubmitLoading(on) {
   const btn = document.getElementById('btn-submit')
@@ -296,7 +347,8 @@ document.getElementById('modal-form').addEventListener('submit', async (e) => {
   const body = {
     description: document.getElementById('tx-description').value.trim(),
     amount:      parseFloat(document.getElementById('tx-amount').value),
-    type:        selectedType,
+    // Map UI type values to the API values stored in the DB
+    type:        selectedType === 'income' ? 'receita' : 'despesa',
     date:        document.getElementById('tx-date').value,
     category_id: document.getElementById('tx-category').value || null,
   }
@@ -322,7 +374,7 @@ document.getElementById('modal-form').addEventListener('submit', async (e) => {
     if (res.status === 401) { logout(); return }
     if (!res.ok) {
       const data = await res.json()
-      showModalAlert(data.error || 'Erro ao salvar transação.')
+      showModalAlert(data.error || 'Failed to save transaction.')
       return
     }
 
@@ -331,7 +383,7 @@ document.getElementById('modal-form').addEventListener('submit', async (e) => {
 
   } catch (err) {
     console.error('[Submit Error]', err)
-    showModalAlert('Erro de conexão. Tente novamente.')
+    showModalAlert('Connection error. Please try again.')
   } finally {
     setSubmitLoading(false)
   }
@@ -358,7 +410,7 @@ document.getElementById('btn-confirm-delete').addEventListener('click', async ()
 
   } catch (err) {
     console.error('[Delete Error]', err)
-    showPageAlert('Erro ao excluir transação.')
+    showPageAlert('Failed to delete transaction.')
     closeConfirm()
   } finally {
     btn.disabled = false

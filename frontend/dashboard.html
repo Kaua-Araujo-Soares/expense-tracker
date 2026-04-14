@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Dashboard — visão geral das suas finanças no Expense Tracker." />
+  <meta name="description" content="Dashboard — get a financial overview of your expenses in Expense Tracker." />
   <title>Dashboard — Expense Tracker</title>
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/dashboard.css" />
@@ -24,14 +24,17 @@
         <i data-feather="grid"></i> Dashboard
       </a>
       <a href="transactions.html" class="nav-link" id="nav-transactions">
-        <i data-feather="list"></i> Transações
+        <i data-feather="list"></i> Transactions
+      </a>
+      <a href="categories.html" class="nav-link" id="nav-categories">
+        <i data-feather="tag"></i> Categories
       </a>
     </nav>
 
     <div class="navbar-user">
       <div class="user-avatar" id="user-avatar">?</div>
-      <span class="user-name" id="user-name">Carregando...</span>
-      <button id="btn-logout" class="btn-icon btn-logout" title="Sair" onclick="logout()">
+      <span class="user-name" id="user-name">Loading...</span>
+      <button id="btn-logout" class="btn-icon btn-logout" title="Logout" onclick="logout()">
         <i data-feather="log-out"></i>
       </button>
     </div>
@@ -43,8 +46,8 @@
     <!-- Page Header -->
     <div class="page-header">
       <div>
-        <h1 class="page-title">Visão Geral</h1>
-        <p class="page-subtitle">Resumo financeiro do mês selecionado</p>
+        <h1 class="page-title">Overview</h1>
+        <p class="page-subtitle">Financial summary for the selected month</p>
       </div>
 
       <!-- Month filter -->
@@ -54,21 +57,21 @@
           id="month-picker"
           type="month"
           class="month-input"
-          aria-label="Filtrar por mês"
+          aria-label="Filter by month"
         />
       </div>
     </div>
 
     <!-- ─── Summary Cards ──────────────────────────────────── -->
-    <section class="cards-grid" aria-label="Resumo financeiro">
+    <section class="cards-grid" aria-label="Financial summary">
 
       <div class="summary-card card-income" id="card-income">
         <div class="card-icon-wrap income-icon">
           <i data-feather="trending-up"></i>
         </div>
         <div class="card-body">
-          <span class="card-label">Total de Receitas</span>
-          <span class="card-value" id="val-income">R$ —</span>
+          <span class="card-label">Total Income</span>
+          <span class="card-value" id="val-income">$ —</span>
         </div>
         <div class="card-glow income-glow"></div>
       </div>
@@ -78,8 +81,8 @@
           <i data-feather="trending-down"></i>
         </div>
         <div class="card-body">
-          <span class="card-label">Total de Despesas</span>
-          <span class="card-value" id="val-expense">R$ —</span>
+          <span class="card-label">Total Expenses</span>
+          <span class="card-value" id="val-expense">$ —</span>
         </div>
         <div class="card-glow expense-glow"></div>
       </div>
@@ -89,8 +92,8 @@
           <i data-feather="dollar-sign"></i>
         </div>
         <div class="card-body">
-          <span class="card-label">Saldo do Período</span>
-          <span class="card-value" id="val-balance">R$ —</span>
+          <span class="card-label">Period Balance</span>
+          <span class="card-value" id="val-balance">$ —</span>
         </div>
         <div class="card-glow balance-glow"></div>
       </div>
@@ -103,15 +106,15 @@
       <!-- Pie chart -->
       <div class="chart-card" id="chart-card-pie">
         <div class="chart-card-header">
-          <h2 class="chart-title">Despesas por Categoria</h2>
-          <span class="chart-badge" id="pie-badge">Mês atual</span>
+          <h2 class="chart-title">Expenses by Category</h2>
+          <span class="chart-badge" id="pie-badge">Current month</span>
         </div>
 
         <div class="chart-canvas-wrap">
-          <canvas id="chart-pie" aria-label="Gráfico de despesas por categoria"></canvas>
+          <canvas id="chart-pie" aria-label="Expenses by category chart"></canvas>
           <div class="chart-empty" id="pie-empty" style="display:none">
             <i data-feather="pie-chart"></i>
-            <p>Sem despesas no período</p>
+            <p>No expenses in this period</p>
           </div>
         </div>
 
@@ -122,7 +125,7 @@
       <!-- Category breakdown table -->
       <div class="chart-card" id="chart-card-list">
         <div class="chart-card-header">
-          <h2 class="chart-title">Detalhamento</h2>
+          <h2 class="chart-title">Breakdown</h2>
         </div>
         <div class="category-list" id="category-list">
           <div class="skeleton-row"></div>

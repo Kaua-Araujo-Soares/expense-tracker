@@ -1,0 +1,212 @@
+/* ─── Categories Grid ────────────────────────────────────── */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+/* ─── Category Card ──────────────────────────────────────── */
+.cat-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 20px 20px 22px;
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(16px);
+  transition: var(--transition);
+  overflow: hidden;
+}
+
+.cat-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--accent), var(--accent-dark));
+  border-radius: 99px 0 0 99px;
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.cat-card:hover {
+  border-color: rgba(255,255,255,0.12);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card);
+}
+
+.cat-card:hover::before {
+  opacity: 1;
+}
+
+.cat-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background: rgba(99,102,241,0.12);
+  color: var(--accent-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+
+.cat-card:hover .cat-icon-wrap {
+  background: rgba(99,102,241,0.2);
+}
+
+.cat-icon-wrap svg { width: 18px; height: 18px; }
+
+.cat-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.cat-card-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cat-card-meta {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.cat-card-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.cat-card:hover .cat-card-actions {
+  opacity: 1;
+}
+
+/* ─── Skeleton Card ──────────────────────────────────────── */
+.skeleton-card {
+  height: 84px;
+  background: linear-gradient(90deg,
+    var(--glass-bg) 25%,
+    rgba(255,255,255,0.06) 50%,
+    var(--glass-bg) 75%
+  );
+  background-size: 600px 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+/* ─── Inline Category Creator (inside transaction modal) ─── */
+.cat-inline-wrap {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  align-items: center;
+}
+
+.btn-add-cat {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--accent-light);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.btn-add-cat:hover { color: var(--text-primary); }
+.btn-add-cat svg { width: 13px; height: 13px; }
+
+.cat-inline-input-wrap {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  animation: fadeIn 0.18s ease;
+}
+
+.cat-inline-input-wrap.visible {
+  display: flex;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.cat-inline-input {
+  flex: 1;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.82rem;
+  padding: 7px 12px;
+  outline: none;
+  transition: var(--transition);
+}
+
+.cat-inline-input::placeholder { color: var(--text-muted); }
+
+.cat-inline-input:focus {
+  border-color: var(--accent);
+  background: rgba(99,102,241,0.06);
+}
+
+.btn-cat-save,
+.btn-cat-cancel {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+
+.btn-cat-save svg, .btn-cat-cancel svg { width: 13px; height: 13px; }
+
+.btn-cat-save:hover {
+  background: rgba(34,197,94,0.12);
+  border-color: rgba(34,197,94,0.35);
+  color: var(--success);
+}
+
+.btn-cat-cancel:hover {
+  background: rgba(239,68,68,0.12);
+  border-color: rgba(239,68,68,0.35);
+  color: var(--danger);
+}
+
+/* ─── Responsive ─────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .cat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cat-card-actions {
+    opacity: 1;
+  }
+}
