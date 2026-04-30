@@ -11,7 +11,7 @@ const authMiddleware = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, 'minhasenhasecretajwt123')
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
     req.user = decoded       // full decoded user data
     req.userId = decoded.id  // handy shortcut for controllers
     next()

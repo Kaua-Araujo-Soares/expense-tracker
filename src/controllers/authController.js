@@ -55,7 +55,7 @@ const login = async (req, res) => {
     // Sign the token with the user's id and email — no sensitive data inside
     const token = jwt.sign(
       { id: user.id, email: user.email },
-      'minhasenhasecretajwt123',
+      process.env.JWT_SECRET,
       { expiresIn: '7d' }
     )
 

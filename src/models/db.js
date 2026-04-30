@@ -2,11 +2,11 @@ const { Pool } = require('pg')
 
 // Hardcoded credentials for local testing — move to .env before going to production
 const pool = new Pool({
-  host: 'localhost',
-  port: 5432,
-  database: 'expense_tracker',
-  user: 'postgres',
-  password: '123456',
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  database: process.env.DB_NAME,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
 })
 
 // Test the database connection as soon as this module is loaded
